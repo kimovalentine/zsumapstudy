@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content = "width = device-width, initial-scale =1, minimum-scale = .2, maximum-scale = 2, user-scalable = yes" />
+
+  <link rel="stylesheet" href="background-info/background-map.css">
+  <link rel="stylesheet" href="background-info/buttons.css">
+  
+  <title>ZSU Map Study</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    .route {
+      stroke: blue
+    }
+    .fix-name {
+			border-radius: 3px;
+			border: none;
+			background: transparent;
+			width: 50pt;
+			text-transform: uppercase;
+      font-weight: bold;
+    }
+    .fix-name-s {
+			border-radius: 2px;
+			border: none;
+			background: transparent;
+			width: 40pt;
+      font-size: 8pt;
+			text-transform: uppercase;
+      font-weight: bold;
+    }
+    .fix-name-xs {
+			border-radius: 2px;
+			border: none;
+			background: transparent;
+			width: 40pt;
+      font-size: 7pt;
+			text-transform: uppercase;
+      font-weight: bold;
+    }
+
+  </style>
+	
+  
+
+
+
+
+</head>
+<body onload="addInput()">
+  
+  <div class="button">
+    <a href="index.html"><button>Home Page</button></a>
+    <button onclick="fillBoxes()">Fill Answers</button>
+    <button onclick="clearBoxes()">Reset</button>
+    <button onclick="toggleSectors()">Toggle Airspace</button>
+    <button onclick="checkAll()" id="checkAnswers" >Check Answers</button>
+    <span class="checkbox">
+      <input class="checkbox" onclick="setAutocorrect()" type="checkbox" name="autocorrect" id="enableAutocorrect">
+     Autocorrect
+     </span>
+     </div>
+
+    
+
+
+
+
+
+  <div id="fixes">
+    <input id="socco_SOCCO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1200px; top: 373px;" maxlength="5">
+    <input id="zabor_ZABOR" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1295px; top: 303px;" maxlength="5">
+    <input id="dawin_DAWIN" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1370px; top: 435px;"  maxlength="5">
+    <input id="rkdia_RKDIA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1770px; top: 345px;" maxlength="5">
+    <input id="obike_OBIKE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1550px; top: 670px;" maxlength="5">
+    <input id="yiyyo_YIYYO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1120px; top: 425px;" maxlength="5">
+    <input id="neydu_NEYDU" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1480px; top: 755px;" maxlength="5">
+    <input id="lamkn_LAMKN" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1450px; top: 910px;" maxlength="5">
+    <input id="elopo_ELOPO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1415px; top: 988px;" maxlength="5">
+    <input id="trnky_TRNKY" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1280px; top: 820px;" maxlength="5">
+    <input id="mnolo_MNOLO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1370px; top: 860px;" maxlength="5">
+    <input id="zpata_ZPATA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1362px; top: 1025px;" maxlength="5">
+    <input id="slugo_SLUGO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1196px; top: 850px;" maxlength="5">
+    <input id="juice_JUICE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1202px; top: 924px;" maxlength="5">
+    <input id="gouda_GOUDA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1202px; top: 955px;" maxlength="5">
+    <input id="gabar_GABAR" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1270px; top: 1055px;" maxlength="5">
+    <input id="modux_MODUX" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1270px; top: 1130px;" maxlength="5">
+    <input id="iluri_ILURI" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1345px; top: 1230px;" maxlength="5">
+    <input id="geece_GEECE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1320px; top: 1465px;" maxlength="5">
+    <input id="anada_ANADA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1080px; top: 1500px;" maxlength="5">
+    <input id="kiker_KIKER" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 930px; top: 1455px;" maxlength="5">
+    <input id="milok_MILOK" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 782px; top: 1412px;" maxlength="5">
+    <input id="armur_ARMUR" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 600px; top: 1410px;" maxlength="5">
+    <input id="scapa_SCAPA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 438px; top: 1358px;" maxlength="5">
+    <input id="negon_NEGON" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 420px; top: 1207px;" maxlength="5">
+    <input id="satoe_SATOE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 420px; top: 1037px;" maxlength="5">
+    <input id="kbeza_KBEZA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 448px; top: 1297px;" maxlength="5">
+    <input id="crstl_CRSTL" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 690px; top: 1260px;" maxlength="5">
+    <input id="dakes_DAKES" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 520px; top: 1140px;" maxlength="5">
+    <input id="alask_ALASK" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 685px; top: 1155px;" maxlength="5">
+    <input id="eteee_ETEEE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 822px; top: 1220px;" maxlength="5">
+    <input id="anner_ANNER" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 990px; top: 1274px;" maxlength="5">
+    <input id="gagdd_GAGDD" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 283px; top: 671px;" maxlength="5">
+    <input id="lennt_LENNT" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 553px; top: 358px;" maxlength="5">
+    <input id="kinch_KINCH" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 532px; top: 320px;" maxlength="5">
+    <input id="ferna_FERNA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 570px; top: 285px;" maxlength="5">
+    <input id="thank_THANK" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 670px; top: 320px;" maxlength="5">
+    <input id="vorce_VORCE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 750px; top: 280px;" maxlength="5">
+    <input id="geroa_GEROA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 785px; top: 360px;" maxlength="5">
+    <input id="oduca_ODUCA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 885px; top: 390px;" maxlength="5">
+    <input id="pling_PLING" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 601px; top: 576px;" maxlength="5">
+    <input id="vermo_VERMO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 660px; top: 560px;" maxlength="5">
+    <input id="keeka_KEEKA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 835px; top: 193px;" maxlength="5">
+    <input id="macor_MACOR" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 525px; top: 200px;" maxlength="5">
+    <input id="prcha_PRCHA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 602px; top: 50px;" maxlength="5">
+    <input id="woodz_WOODZ" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 240px; top: 210px;" maxlength="5">
+    <input id="qnepa_QNEPA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1100px; top: 70px;" maxlength="5">
+    <input id="aleri_ALERI" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 200px; top: 70px;" maxlength="5">
+    <input id="cerda_CERDA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 45px; top: 115px;" maxlength="5">
+    <input id="kndll_KNDLL" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 270px; top: 310px;" maxlength="5">
+    <input id="opaul_OPAUL" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1140px; top: 230px;" maxlength="5">
+    <input id="guyro_GUYRO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1097px; top: 800px;" maxlength="5">
+    <input id="larpp_LARPP" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1106px; top: 887px;" maxlength="5">
+    <input id="rafee_RAFEE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 894px; top: 1290px;" maxlength="5">
+    <input id="rayas_RAYAS" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 820px; top: 1360px;" maxlength="5">
+    <input id="dunta_DUNTA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1440px; top: 1350px;" maxlength="5">
+    <input id="goret_GORET" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1460px; top: 1200px;" maxlength="5">
+    <input id="mystr_MYSTR" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 282px; top: 356px;" maxlength="5">
+    
+
+    
+    
+    <input id="fipek_FIPEK" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 398px; top: 445px;" maxlength="5">
+    <input id="donqu_DONQU" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 293px; top: 470px;" maxlength="5">
+    <input id="sappo_SAPPO" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 293px; top: 548px;" maxlength="5">
+    <input id="fekko_FEKKO" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 301px; top: 560px;" maxlength="5">
+    <input id="calto_CALTO" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 270px; top: 590px;" maxlength="5">
+    <input id="harbg_HARBG" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 226px; top: 630px;" maxlength="5">
+    <input id="conch_CONCH" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 356px; top: 565px;" maxlength="5">
+    <input id="janma_JANMA" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 488px; top: 485px;" maxlength="5">
+    <input id="puyya_PUYYA" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 452px; top: 520px;" maxlength="5">
+    <input id="ziber_ZIBER" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 409px; top: 670px;" maxlength="5">
+    <input id="sault_SAULT" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1080px; top: 525px;" maxlength="5">
+    <input id="caffe_CAFFE" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 928px; top: 555px;" maxlength="5">
+    <input id="kolao_KOLAO" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 882px; top: 708px;" maxlength="5">
+    <input id="fratt_FRATT" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 808px; top: 686px;" maxlength="5">
+    <input id="acony_ACONY" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 665px; top: 770px;" maxlength="5">
+    <input id="saalr_SAALR" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 706px; top: 762px;" maxlength="5">
+    <input id="utahs_UTAHS" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 530px; top: 648px;" maxlength="5">
+    <input id="munoz_MUNOZ" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 438px; top: 778px;" maxlength="5">
+    <input id="vachi_VACHI" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 487px; top: 830px;" maxlength="5">
+    <input id="aqaba_AQABA" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 462px; top: 847px;" maxlength="5">
+    <input id="leila_LEILA" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 445px; top: 859px;" maxlength="5">
+    <input id="katok_KATOK" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 388px; top: 805px;" maxlength="5">
+    <input id="mella_MELLA" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 402px; top: 940px;" maxlength="5">
+    <input id="meegl_MEEGL" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 518px; top: 898px;" maxlength="5">
+    <input id="zadav_ZADAV" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 477px; top: 908px;" maxlength="5">
+    <input id="joshe_JOSHE" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 626px; top: 920px;" maxlength="5">
+    <input id="tayog_TAYOG" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 580px; top: 990px;" maxlength="5">
+    <input id="bewik_BEWIK" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 640px; top: 995px;" maxlength="5">
+    <input id="gesso_GESSO" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 811px; top: 1036px;" maxlength="5">
+    <input id="leeoo_LEEOO" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1070px; top: 998px;" maxlength="5">
+    <input id="vedas_VEDAS" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 847px; top: 962px;" maxlength="5">
+    <input id="tuuna_TUUNA" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 785px; top: 946px;" maxlength="5">
+    <input id="dande_DANDE" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1195px; top: 1037px;" maxlength="5">
+    <input id="porqe_PORQE" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1153px; top: 1084px;" maxlength="5">
+    <input id="tilda_TILDA" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 463px; top: 580px;" maxlength="5">
+    <input id="dozgo_DOZGO" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 490px; top: 610px;" maxlength="5">
+    <input id="idaho_IDAHO" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 453px; top: 744px;" maxlength="5">
+    <input id="betir_BETIR" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 280px; top: 714px;" maxlength="5">
+    <input id="chuma_CHUMA" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 325px; top: 737px;" maxlength="5">
+    <input id="wexet_WEXET" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 670px; top: 660px;" maxlength="5">
+    <input id="panmo_PANMO" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 714px; top: 744px;" maxlength="5">
+    <input id="robll_ROBLL" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 568px; top: 773px;" maxlength="5">
+    <input id="beano_BEANO" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 620px; top: 830px;" maxlength="5">
+    <input id="antex_ANTEX" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 400px; top: 880px;" maxlength="5">
+    <input id="jetss_JETSS" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 860px; top: 835px;" maxlength="5">
+    <input id="malie_MALIE" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 873px; top: 868px;" maxlength="5">
+    <input id="harde_HARDE" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 184px; top: 615px;" maxlength="5">
+    <input id="elmuc_ELMUC" class="fix-name-s" type="text" 
+    placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 315px; top: 450px;" maxlength="5">
+    
+    
+    <input id="hancy_HANCY" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 660px; top: 214px;" maxlength="5">
+    <input id="crupe_CRUPE" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 704px; top: 200px;" maxlength="5">
+    <input id="baroe_BAROE" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 753px; top: 205px;" maxlength="5">
+    <input id="chedr_CHEDR" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 740px; top: 240px;" maxlength="5">
+
+
+
+
+
+
+
+  </div>
+
+  <svg viewBox="0 0 100 100">
+    <line x1="21.2" y1="46.72" x2="25.45" y2="44.2" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="26.3" y1="43.65" x2="27.1" y2="43.18" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="27.95" y1="42.7" x2="37.1" y2="37.3" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="37.7" y1="36.87" x2="41.49" y2="34.71" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="42.4" y1="34.1" x2="51.6" y2="28.2" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="52.5" y1="27.42" x2="55.97" y2="25.25" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="56.94" y1="24.65" x2="62.16" y2="21.3" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="63" y1="20.63" x2="67.4" y2="17.5" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+    <line x1="68.14" y1="16.9" x2="71.3" y2="14.7" stroke="black" stroke-width="1px" vector-effect="non-scaling-stroke"></line>
+
+
+
+
+
+  </svg>
+
+
+
+
+
+<script src="background-info/src-7-22.js"></script>
+
+</body>
+
+
+
+</html>
+
+
+
+
+
