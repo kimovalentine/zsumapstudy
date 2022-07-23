@@ -14,6 +14,10 @@
     body {
       font-family: sans-serif;
     }
+    input:disabled
+		{
+		    opacity:1;
+		}		
     .route {
       stroke: blue
     }
@@ -43,6 +47,29 @@
 			text-transform: uppercase;
       font-weight: bold;
     }
+    .sectorText {
+			border-radius: 3px;
+			border:1px;
+      border-style: solid;
+      border-color: black;
+			background: transparent;
+			width: 70pt;
+			text-transform: uppercase;
+      font-size: 7pt;
+      text-align: center;
+      font-weight: bold;}
+
+      .errorCount {
+			position: fixed;
+			background: white;
+	    bottom: 10;
+	    right: 10;
+		}
+		
+		.checkbox {
+			display: inline-block;
+
+		}
 
   </style>
 	
@@ -59,13 +86,95 @@
     <button onclick="fillBoxes()">Fill Answers</button>
     <button onclick="clearBoxes()">Reset</button>
     <button onclick="toggleSectors()">Toggle Airspace</button>
+    <button onclick="hintBoxes()">Hint!</button>
     <button onclick="checkAll()" id="checkAnswers" >Check Answers</button>
-    <span class="checkbox">
-      <input class="checkbox" onclick="setAutocorrect()" type="checkbox" name="autocorrect" id="enableAutocorrect">
-     Autocorrect
-     </span>
+    <span class = "checkbox"><input class = "checkbox" onclick="setAutocorrect()" type = "checkbox" name = "autocorrect" id = "enableAutocorrect"> Autocorrect</span>
      </div>
+     
+     <div id="sectors">	
+      <div style="position: absolute; left: 265px; top: 824px; width: 70px;" class="sectorText">
+        PUNTA CANA<br>
+        <u>_15500_ </u><br>
+        
+        119.75
+      </div>
 
+      <div style="position: absolute; left: 255px; top: 1190px; width: 120px;" class="sectorText">
+        MDCS<br>
+        <u>__SANTO DOMINGO__ </u><br>
+        N - 124.3 <br>
+        S - 127.8
+      </div>
+
+      <div style="position: absolute; left: 255px; top: 1390px;" class="sectorText">
+        TNCF <br>
+        <u>__CURACAO__</u><br>
+        124.1 <br>
+        127.1
+      </div>
+
+      <div style="position: absolute; left: 615px; top: 1470px;" class="sectorText">
+        SVZM<br>
+        <u>__MAIQUETIA__ </u><br>
+        125.2 <br>
+        126.0
+      </div>
+
+      <div style="position: absolute; left: 1205px; top: 1520px;" class="sectorText">
+        TTZP<br>
+        <u>__PIARCO__ </u><br>
+        123.7
+        </div>
+
+      <div style="position: absolute; left: 1435px; top: 1300px;" class="sectorText">
+          TFFR<br>
+          GUADELOUPE <br>
+          <u>__FL 245__ </u><br>
+          121.3
+          </div>
+      
+      <div style="position: absolute; left: 1535px; top: 1020px;" class="sectorText">
+        TAPA<br>
+        VC BIRD <br>
+        <u>__FL 245__ </u><br>
+        119.1
+        </div>
+      
+      <div style="position: absolute; left: 1360px; top: 1100px;" class="sectorText">
+        TKPK<br>
+        ST. KITTS <br>
+        <u>__FL 15000__ </u><br>
+        123.7
+         </div>
+      
+      <div style="position: absolute; left: 1265px; top: 965px;" class="sectorText">
+      TNCM<br>
+      JULIANA <br>
+      <u>__FL 150__ </u><br>
+      118.7 <br>
+      128.95
+      </div>
+
+     <div style="position: absolute; left: 1365px; top: 1210px; width: 40px;" class="sectorText">
+      TTZP<br>
+      </div>
+    
+    <div style="position: absolute; left: 1175px; top: 1120px; width: 60px;" class="sectorText">
+      SEC 2 <br>
+      118.15 <br>
+      269.0
+      </div>
+    <div style="position: absolute; left: 695px; top: 1080px; width: 60px;" class="sectorText">
+      SEC 8 <br>
+      118.75 <br>
+      259.1
+        </div>
+
+    </div>
+  
+        
+       
+    </div>
     
 
 
@@ -120,7 +229,7 @@
     <input id="prcha_PRCHA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 602px; top: 50px;" maxlength="5">
     <input id="woodz_WOODZ" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 240px; top: 210px;" maxlength="5">
     <input id="qnepa_QNEPA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1100px; top: 70px;" maxlength="5">
-    <input id="aleri_ALERI" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 200px; top: 70px;" maxlength="5">
+    <input id="watrs_WATRS" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 423px; top: 260px;" maxlength="5">
     <input id="cerda_CERDA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 45px; top: 115px;" maxlength="5">
     <input id="kndll_KNDLL" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 270px; top: 310px;" maxlength="5">
     <input id="opaul_OPAUL" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1140px; top: 230px;" maxlength="5">
@@ -131,9 +240,42 @@
     <input id="dunta_DUNTA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1440px; top: 1350px;" maxlength="5">
     <input id="goret_GORET" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1460px; top: 1200px;" maxlength="5">
     <input id="mystr_MYSTR" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 282px; top: 356px;" maxlength="5">
-    
+    <input id="skb_SKB" class="fix-name" type="text" placeholder="ABC" spellcheck="false" style="position:absolute; text-align: center; left: 1355px; top: 1076px;" maxlength="5">
+
 
     
+    <input id="gradi_GRADI" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 97px; top: 510px;" maxlength="5">
+    <input id="pjm_PJM" class="fix-name" type="text" placeholder="ABC" spellcheck="false" style="position:absolute; text-align: center; left: 1275px; top: 946px;" maxlength="5">
+    <input id="anu_ANU" class="fix-name" type="text" placeholder="ABC" spellcheck="false" style="position:absolute; text-align: center; left: 1570px; top: 1064px;" maxlength="5">
+    <input id="pna_PNA" class="fix-name" type="text" placeholder="ABC" spellcheck="false" style="position:absolute; text-align: center; left: 324px; top: 860px;" maxlength="5">
+    <input id="maz_MAZ" class="fix-name" type="text" placeholder="ABC" spellcheck="false" style="position:absolute; text-align: center; left: 525px; top: 930px;" maxlength="5">
+    <input id="silva_SILVA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 605px; top: 1594px;" maxlength="5">
+    <input id="nopit_NOPIT" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 86px; top: 464px;" maxlength="5">
+    <input id="macki_MACKI" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 30px; top: 540px;" maxlength="5">
+    <input id="pixar_PIXAR" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 220px; top: 772px;" maxlength="5">
+    <input id="etala_ETALA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 970px; top: 1644px;" maxlength="5">
+    <input id="ilamo_ILAMO" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 271px; top: 986px;" maxlength="5">
+    <input id="gabad_GABAD" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 250px; top: 1126px;" maxlength="5">
+    <input id="sorrl_SORRL" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1552px; top: 1398px;" maxlength="5">
+    <input id="gadir_GADIR" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 270px; top: 1464px;" maxlength="5">
+    <input id="tilig_TILIG" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 220px; top: 1064px;" maxlength="5">
+    <input id="ilmet_ILMET" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 726px; top: 1500px;" maxlength="5">
+    <input id="ilara_ILARA" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 206px; top: 1015px;" maxlength="5">
+    <input id="itluv_ITLUV" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1280px; top: 1640px;" maxlength="5">
+    <input id="talsu_TALSU" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 732px; top: 4px;" maxlength="5">
+    <input id="nubus_NUBUS" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 790px; top: 14px;" maxlength="5">
+    <input id="cdo_CDO" class="fix-name" type="text" placeholder="ABC" spellcheck="false" style="position:absolute; text-align: center; left: 60px; top: 872px;" maxlength="5">
+    <input id="vibsi_VIBSI" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 1460px; top: 1635px;" maxlength="5">
+    <input id="farmn_FARMN" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 20px; top: 270px;" maxlength="5">
+    <input id="chyle_CHYLE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 140px; top: 420px;" maxlength="5">
+    <input id="hagit_HAGIT" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 5px; top: 460px;" maxlength="5">
+    <input id="mndez_MNDEZ" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 150px; top: 50px;" maxlength="5">
+    <input id="antox_ANTOX" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 50px; top: 424px;" maxlength="5">
+    <input id="mapep_MAPEP" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 300px; top: 805px;" maxlength="5">
+    <input id="detre_DETRE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 30px; top: 220px;" maxlength="5">
+    <input id="fdlee_FDLEE" class="fix-name" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 230px; top: 405px;" maxlength="5">
+    <input id="ddp_DDP" class="fix-name" type="text" placeholder="ABC" spellcheck="false" style="position:absolute; text-align: center; left: 660px; top: 883px;" maxlength="5">
+
     
     <input id="fipek_FIPEK" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 398px; top: 445px;" maxlength="5">
     <input id="donqu_DONQU" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 293px; top: 470px;" maxlength="5">
@@ -198,12 +340,16 @@
     placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 184px; top: 615px;" maxlength="5">
     <input id="elmuc_ELMUC" class="fix-name-s" type="text" 
     placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 315px; top: 450px;" maxlength="5">
+    <input id="gosul_GOSUL" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 253px; top: 882px;" maxlength="5">
+    <input id="asivo_ASIVO" class="fix-name-s" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 50px; top: 637px;" maxlength="5">
     
     
     <input id="hancy_HANCY" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 660px; top: 214px;" maxlength="5">
     <input id="crupe_CRUPE" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 704px; top: 200px;" maxlength="5">
     <input id="baroe_BAROE" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 753px; top: 205px;" maxlength="5">
     <input id="chedr_CHEDR" class="fix-name-xs" type="text" placeholder="ABCDE" spellcheck="false" style="position:absolute; text-align: center; left: 740px; top: 240px;" maxlength="5">
+
+    
 
 
 
