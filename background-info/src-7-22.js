@@ -102,13 +102,46 @@ var fixArray = [
   "macor_MACOR",
   "kndll_KNDLL",
   "woodz_WOODZ",
-  "aleri_ALERI",
+  "watrs_WATRS",
   "cerda_CERDA",
   "goret_GORET",
   "dunta_DUNTA",
   "wexet_WEXET",
   "kolao_KOLAO",
   "mystr_MYSTR",
+	"skb_SKB",
+	"gradi_GRADI",
+	"pjm_PJM",
+	"anu_ANU",
+	"pna_PNA",
+	"maz_MAZ",
+	"silva_SILVA",
+	"nopit_NOPIT",
+	"macki_MACKI",
+	"pixar_PIXAR",
+	"etala_ETALA",
+	"ilamo_ILAMO",
+	"gabad_GABAD",
+	"sorrl_SORRL",
+	"gadir_GADIR",
+	"tilig_TILIG",
+	"ilmet_ILMET",
+	"ilara_ILARA",
+	"itluv_ITLUV",
+	"talsu_TALSU",
+	"nubus_NUBUS",
+	"cdo_CDO",
+	"vibsi_VIBSI",
+	"farmn_FARMN",
+	"chyle_CHYLE",
+	"hagit_HAGIT",
+	"mndez_MNDEZ",
+	"antox_ANTOX",
+	"mapep_MAPEP",
+	"detre_DETRE",
+	"fdlee_FDLEE",
+	"gosul_GOSUL",
+	"asivo_ASIVO"
 ];
 
 var errorCount = 0;							
@@ -125,7 +158,7 @@ var errorCount = 0;
 				}
 				else {
 					autocorrect = false;
-					checkButton.style.backgroundColor = "#0061c6";
+					checkButton.style.backgroundColor = "rgba(83, 83, 241, 0.918)";
 				}
 			}
       
@@ -175,11 +208,9 @@ var errorCount = 0;
 						node.style.left = coords.left;
 						node.style.top = coords.top - 15;
 					}}}}}}
-					//degrees around VOR circle 
+					
 					else if (fixName.substring(0, 3) == "fix") {
-						
-						//var rectNode = document.createElementNS("http://www.w3.org/2000/svg","circle");
-						//rectNode.setAttribute("r", "3");
+					
 	
 						node.setAttribute('type', 'tel');
 						node.setAttribute('inputmode', 'numeric');
@@ -197,24 +228,12 @@ var errorCount = 0;
 						//rectNode.setAttribute("cy", parseInt(node.style.top));			
 					}
 					//boundary numbers (diamond box)
-					else {						
-						if (fixName.substring(0,4) == "rect") {
-			
-							var rotation = document.getElementById(fixName).getAttribute("transform");
-							if (rotation !== null) {
-								rotation = rotation.substring(0, rotation.length - 1);
-
-								node.style.transform = rotation + "deg)";
-							}
-						}
+					
+					
 						
-						node.setAttribute('placeholder', "00");
-						node.setAttribute('type', 'tel');
-						node.setAttribute('inputmode', 'numeric');
-						node.style.textAlign = "center";
-						node.style.left = coords.left;
-						node.style.top = coords.top;
-					}					
+						
+						
+									
 
 
 					document.getElementById("fixes").appendChild(node);
