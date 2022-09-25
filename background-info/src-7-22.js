@@ -50,7 +50,7 @@ var fixArray = [
   "lennt_LENNT",
   "janma_JANMA",
   "puyya_PUYYA",
-  "tilda_TILDA",
+  "tildi_TILDI",
   "dozgo_DOZGO",
   "conch_CONCH",
   "gagdd_GAGDD",
