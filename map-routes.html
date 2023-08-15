@@ -573,9 +573,14 @@ displayQuestion(shuffledRoutes[currentRouteIndex].question);
         }, 1500);
     }
     function isPointInRange(point, fix) {
+    const xRange = fix.x * canvas.width;
+    const yRange = fix.y * canvas.height;
+
     return (
-        Math.abs(point.x - fix.x) <= clickTolerance + clickBuffer &&
-        Math.abs(point.y - fix.y) <= clickTolerance + clickBuffer
+        point.x >= xRange - clickTolerance - clickBuffer &&
+        point.x <= xRange + clickTolerance + clickBuffer &&
+        point.y >= yRange - clickTolerance - clickBuffer &&
+        point.y <= yRange + clickTolerance + clickBuffer
     );
 }
 function setChosenOrder(order) {
@@ -687,19 +692,18 @@ const skipButton = document.getElementById('skipButton');
         
 
         canvas.addEventListener('mousedown', (event) => {
-            const rect = canvas.getBoundingClientRect();
-            isDrawing = true;
-            startPoint = {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
-            };
+    const rect = canvas.getBoundingClientRect();
+    isDrawing = true;
+    startPoint = {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+    };
 
-            clickedPoint = {
-                x: startPoint.x + clickBuffer,
-                y: startPoint.y + clickBuffer
-            };
-            currentLine = [startPoint]; // Start a new line with the clicked point
-        
+    clickedPoint = {
+        x: startPoint.x + clickBuffer,
+        y: startPoint.y + clickBuffer
+    };
+    currentLine = [startPoint]; // Start a new line with the clicked point
 });
 
 document.addEventListener('mousemove', (event) => {
@@ -733,27 +737,29 @@ function clearLineCanvas() {
     
 }
 
-document.addEventListener('mouseup', () => {
-    if (!isDrawing) return;
+canvas.addEventListener('mouseup', () => {
+    if (!isDrawing || !clickedPoint) return;
 
-    // Calculate the relative coordinates of the clicked point
-const relativeClickedX = (clickedPoint.x / canvas.width) * 100;
-const relativeClickedY = (clickedPoint.y / canvas.height) * 100;
+    const rect = canvas.getBoundingClientRect();
 
-// Log the relative coordinates where the user clicked
-console.log(`Clicked at Relative X: ${relativeClickedX.toFixed(2)}%, Relative Y: ${relativeClickedY.toFixed(2)}%`);
-
+    // Find the fix that matches the clicked point
+    clickedFix = fixes.find((fix) => isPointInRange(clickedPoint, fix));
 
     if (!orderDecided) {
         orderDecided = true;
+        // Retrieve the current route from shuffledRoutes based on currentRouteIndex
+        const currentRoute = shuffledRoutes[currentRouteIndex];
+        
         if (clickedFix.label === currentRoute.answer[0]) {
             chosenOrder = 'forward';
         } else if (clickedFix.label === currentRoute.answer[currentRoute.answer.length - 1]) {
             chosenOrder = 'reverse';
         }
 
-        canvas.innerHTML = ''; // Clear the canvas to avoid displaying lines prematurely
+        clearLineCanvas(); // Clear the canvas to avoid displaying lines prematurely
     }
+// Define the currentRoute variable
+const currentRoute = shuffledRoutes[currentRouteIndex];
 
     if (orderDecided) {
         if (
@@ -807,6 +813,11 @@ isDrawing = false;
 if (currentRouteIndex === shuffledRoutes.length) {
     showResults();
 }
+ // Reset the relevant variables
+ clickedPoint = null;
+    startPoint = null;
+    isDrawing = false;
+    currentLine = [];
 });
 
 
