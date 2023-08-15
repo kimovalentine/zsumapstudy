@@ -748,7 +748,7 @@ canvas.addEventListener('mouseup', () => {
     if (!orderDecided) {
         orderDecided = true;
         // Retrieve the current route from shuffledRoutes based on currentRouteIndex
-        const currentRoute = shuffledRoutes[currentRouteIndex];
+        currentRoute = shuffledRoutes[currentRouteIndex]; // Use the existing currentRoute variable
         
         if (clickedFix.label === currentRoute.answer[0]) {
             chosenOrder = 'forward';
@@ -758,29 +758,30 @@ canvas.addEventListener('mouseup', () => {
 
         clearLineCanvas(); // Clear the canvas to avoid displaying lines prematurely
     }
-// Define the currentRoute variable
-const currentRoute = shuffledRoutes[currentRouteIndex];
 
     if (orderDecided) {
         if (
             (chosenOrder === 'forward' && clickedFix.label === currentRoute.answer[currentPointIndex]) ||
             (chosenOrder === 'reverse' && clickedFix.label === currentRoute.answer[currentRoute.answer.length - 1 - currentPointIndex])
-        ) {
-        currentLine = []; // Clear the current line
-        correctPath.push(clickedFix);
+            ) {
+            currentLine = []; // Clear the current line
+            correctPath.push(clickedFix);
 
-        // Draw lines between the fixes in the correctPath array
-        ctx.strokeStyle = 'blue';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        correctPath.forEach((fix, index) => {
-            if (index === 0) {
-                ctx.moveTo(fix.x, fix.y);
-            } else {
-                ctx.lineTo(fix.x, fix.y);
-            }
-        });
-        ctx.stroke();
+            // Draw lines between the fixes in the correctPath array
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            correctPath.forEach((fix, index) => {
+                const x = fix.x * canvas.width;
+                const y = fix.y * canvas.height;
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
 
         if (currentPointIndex === currentRoute.answer.length - 1) {
             currentPointIndex = 0;
