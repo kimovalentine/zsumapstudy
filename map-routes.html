@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="background-info/buttons.css">
+    <title>Airway Routes Study</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #070707;
+        }
+
+        #content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px; /* Adjust as needed */
+        }
+        #buttons-container {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+
+        #canvas-container {
+            position: relative;
+        }
+        #map {
+            cursor: crosshair;
+            background-size: auto;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px;
+            background-color: white;
+            border: 2px solid #555;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup.correct {
+            border-color: green;
+        }
+
+        .popup.incorrect {
+            border-color: red;
+        }
+
+        .line {
+            position: absolute;
+            background-color: blue;
+            opacity: 0.6;
+            z-index: -1;
+        }
+        #resultsPopup {
+            background-color: black;
+            color:white;
+        }
+        .button {
+        display: flex;
+        padding-left: 400px;
+        margin-top: 20px; /* Add some spacing from the results */
+    }
+    </style>
+</head>
+<body>
+    <div id="content-container">
+        <h1 id="question" style=" font-size: 40px;">Question goes here</h1>
+    </div>
+    <div id="content-container">
+        <div id="buttons-container">
+            <a href="index.html"><button>Home Page</button></a>
+            <button id="skipButton">Skip</button>
+        </div>
+
+    <canvas id="map"></canvas>
+    <canvas id="lineCanvas"></canvas>
+
+
+    <div id="correctPopup" class="popup correct">
+        Correct! Click on the next point.
+    </div>
+    
+    <div id="incorrectPopup" class="popup incorrect">
+        Try again.
+    </div>
+
+    <div id="results" style="display: none;">
+        <!-- Results will be displayed here -->
+    </div>
+
+    <div id="resultsPopup" class="popup" style="display: none;">
+        <p id="grade"></p>
+        <p id="correctCount"></p>
+        <p id="missedRoutes"></p>
+    </div>
+
+    <script>
+        let currentScale = 1;
+        let correctPath = [];
+        let currentLine = [];
+        const lineCanvas = document.getElementById('lineCanvas');
+        let lineCtx = lineCanvas.getContext('2d'); // Initialize the lineCtx here
+        let chosenOrder = null;
+        let orderDecided = false; // Flag to indicate order decision
+
+        const fixes = [
+            { label: "HARBG", x: 170, y: 490 },
+            { label: "MUNOZ", x: 335, y: 602 },
+            { label: "BQN", x: 434, y: 671 },
+            { label: "ETEEE", x: 679, y: 929 },
+            { label: "RAFEE", x: 736, y: 996 },
+            { label: "ANADA", x: 877, y: 1139 },
+            { label: "PJM", x: 1003, y: 713 },
+            { label: "ZPATA", x: 1059, y: 780 },
+            { label: "ILURI", x: 1032, y: 950 },
+            { label: "PORQE", x: 882, y: 840 },
+            { label: "SLUGO", x: 922, y: 667 },
+            { label: "JUICE", x: 924, y: 705 },
+            { label: "GOUDA", x: 925, y: 732 },
+            { label: "DANDE", x: 929, y: 792 },
+            { label: "TRNKY", x: 989, y: 662 },
+            { label: "ELOPO", x: 1090, y: 757 },
+            { label: "LAMKN", x: 1167, y: 711 },
+            { label: "MNOLO", x: 1050, y: 670 },
+            { label: "NEYDU", x: 1133, y: 573 },
+            { label: "OBIKE", x: 1184, y: 520 },
+            { label: "DAWIN", x: 1080, y: 364 },
+            { label: "SOCCO", x: 988, y: 288 },
+            { label: "YIYYO", x: 911, y: 342 },
+            { label: "SAULT", x: 822, y: 398 },
+            { label: "ODUCA", x: 738, y: 296 },
+            { label: "OPAUL", x: 874, y: 189 },
+            { label: "KEEKA", x: 694, y: 162 },
+            { label: "THANK", x: 597, y: 276 },
+            { label: "VORCE", x: 590, y: 248 },
+            { label: "GEROA", x: 567, y: 256 },
+            { label: "BAROE", x: 600, y: 173 },
+            { label: "CHEDR", x: 573, y: 175 },
+            { label: "CRUPE", x: 560, y: 176 },
+            { label: "HANCY", x: 546, y: 178 },
+            { label: "FERNA", x: 430, y: 218 },
+            { label: "KINCH", x: 406, y: 239 },
+            { label: "LENNT", x: 422, y: 288 },
+            { label: "JANMA", x: 416, y: 389 },
+            { label: "PUYYA", x: 392, y: 410 },
+            { label: "TILDI", x: 354, y: 444 },
+            { label: "DOZGO", x: 378, y: 464 },
+            { label: "CAFFE", x: 759, y: 438 },
+            { label: "KOLAO", x: 668, y: 550 },
+            { label: "FRATT", x: 614, y: 536 },
+            { label: "VERMO", x: 551, y: 441 },
+            { label: "PLING", x: 469, y: 464 },
+            { label: "UTAHS", x: 401, y: 507 },
+            { label: "IDAHO", x: 356, y: 568 },
+            { label: "CONCH", x: 320, y: 432 },
+            { label: "ZIBER", x: 334, y: 535 },
+            { label: "GAGGD", x: 272, y: 512 },
+            { label: "SAPPO", x: 244, y: 405 },
+            { label: "FEKKO", x: 224, y: 430 },
+            { label: "CALTO", x: 200, y: 456 },
+            { label: "HARDE", x: 184, y: 471 },
+            { label: "BETIR", x: 213, y: 554 },
+            { label: "CHUMA", x: 248, y: 574 },
+            { label: "KATOK", x: 306, y: 614 },
+            { label: "ANTEX", x: 306, y: 677 },
+            { label: "MELLA", x: 308, y: 725 },
+            { label: "SATOE", x: 311, y: 790 },
+            { label: "NEGON", x: 315, y: 935 },
+            { label: "SCAPA", x: 393, y: 1043 },
+            { label: "KBEZA", x: 390, y: 990 },
+            { label: "DAKES", x: 458, y: 872 },
+            { label: "ALASK", x: 521, y: 901 },
+            { label: "CRSTL", x: 519, y: 973 },
+            { label: "ARMUR", x: 522, y: 1078 },
+            { label: "MILOK", x: 626, y: 1108 },
+            { label: "KIKER", x: 714, y: 1133 },
+            { label: "GEECE", x: 1008, y: 1133 },
+            { label: "RAYAS", x: 681, y: 1050 },
+            { label: "ANNER", x: 756, y: 974 },
+            { label: "GESSO", x: 630, y: 804 },
+            { label: "GUYRO", x: 858, y: 631 },
+            { label: "LARPP", x: 860, y: 696 },
+            { label: "LEEOO", x: 820, y: 786 },
+            { label: "COY", x: 780, y: 766 },
+            { label: "STT", x: 732, y: 682 },
+            { label: "MALIE", x: 693, y: 664 },
+            { label: "JETSS", x: 679, y: 639 },
+            { label: "VEDAS", x: 654, y: 746 },
+            { label: "TUUNA", x: 610, y: 736 },
+            { label: "BEWIK", x: 500, y: 755 },
+            { label: "TAYOG", x: 473, y: 752 },
+            { label: "MAZ", x: 428, y: 706 },
+            { label: "ZADAV", x: 378, y: 711 },
+            { label: "WEXET", x: 513, y: 518 },
+            { label: "PANMO", x: 549, y: 575 },
+            { label: "SAALR", x: 539, y: 584 },
+            { label: "SJU", x: 595, y: 674 },
+            { label: "DDP", x: 534, y: 674 },
+            { label: "BEANO", x: 501, y: 634 },
+            { label: "ROBBL", x: 447, y: 610 },
+            { label: "VACHI", x: 405, y: 660 },
+            { label: "AQABA", x: 394, y: 657 },
+            { label: "LEILA", x: 379, y: 674 },
+            { label: "MODUX", x: 1030, y: 860 },
+            { label: "GABAR", x: 1024, y: 816 },
+            { label: "PASIC", x: 790, y: 683 },
+            { label: "TANZY", x: 834, y: 766 },
+            { label: "SNOOZ", x: 729, y: 758 },
+            { label: "JOSHE", x: 522, y: 704 },
+            { label: "MLIZA", x: 836, y: 743 },
+            { label: "GABYY", x: 492, y: 779 },
+            { label: "FIPEK", x: 298, y: 347 },
+            { label: "ELMUC", x: 284, y: 358 },
+            { label: "DONQU", x: 280, y: 370 },
+            { label: "STIIV", x: 750, y: 706 },
+            { label: "ACONY", x: 520, y: 610 },
+            { label: "GOTAY", x: 692, y: 687 },
+            { label: "SAYER", x: 386, y: 565 },
+            { label: "MEEGL", x: 421, y: 676 },
+            
+
+            // ... add more fixes here
+        ];
+    
+        const routes = [
+            {
+                name: 'L452',
+                question: "What is the route for L452?",
+                answer: ["HARBG", "MUNOZ", "BQN", "ETEEE", "RAFEE", "ANADA"]
+            },
+            {
+                name: 'A555',
+                question: "What is the route for A555?",
+                answer: ["ILURI", "PORQE", "COY", "TUUNA", "DDP", "IDAHO", "HARDE"]
+            },
+            {
+                name: 'A638',
+                question: "What is the route for A638?",
+                answer: ["STT", "GUYRO", "SLUGO", "PJM"]
+            },
+            {
+                name: 'B520',
+                question: "What is the route for B520?",
+                answer: ["ELOPO", "PJM", "JUICE", "LARPP", "PASIC", "STT", "MALIE", "DDP", "BQN", "ANTEX"]
+            },
+            {
+                name: 'B892',
+                question: "What is the route for B892?",
+                answer: ["ANTEX", "MAZ"]
+            },
+            {
+                name: 'G633',
+                question: "What is the route for G633?",
+                answer: ["GABAR", "DANDE", "TANZY", "COY", "SNOOZ", "TUUNA", "DDP", "MAZ", "ZADAV", "MELLA"]
+            },
+            {name: 'N779',
+                question: "What is the route for N779?",
+                answer: ["ARMUR", "CRSTL", "ALASK", "JOSHE"]
+            },
+            {
+                name: 'R507',
+                question: "What is the route for R507?",
+                answer: ["UTAHS", "CONCH", "SAPPO"]
+            },
+            {
+                name: 'R760',
+                question: "What is the route for R760?",
+                answer: ["COY", "GOUDA", "PJM"]
+            },
+            {
+                name: 'R763',
+                question: "What is the route for R763?",
+                answer: ["BQN", "MUNOZ", "HARBG"]
+            },
+            {
+                name: 'R888',
+                question: "What is the route for R888?",
+                answer: ["COY", "MODUX"]
+            },
+            {
+                name: 'M348',
+                question: "What is the route for M348?",
+                answer: ["MEEGL", "AQABA", "KATOK"]
+            },
+            {
+                name: 'M423',
+                question: "What is the route for M423?",
+                answer: ["KIKER", "RAYAS", "PLING", "LENNT"]
+            },
+            {
+                name: 'M525',
+                question: "What is the route for M525?",
+                answer: ["MELLA", "LEILA", "VACHI", "PANMO", "FRATT", "CAFFE", "YIYYO", "SOCCO"]
+            },
+            {
+                name: 'M576',
+                question: "What is the route for M576?",
+                answer: ["MILOK", "RAYAS", "RAFEE", "ANNER", "PORQE", "DANDE", "PJM", "MNOLO", "NEYDU", "OBIKE"]
+            },
+            {
+                name: 'M597',
+                question: "What is the route for M597?",
+                answer: ["KEEKA", "THANK", "JANMA", "PUYYA", "BETIR"]
+            },
+            {
+                name: 'L204',
+                question: "What is the route for L204?",
+                answer: ["PJM", "GOUDA", "MLIZA", "COY", "GESSO"]
+            },
+            {
+                name: 'L221',
+                question: "What is the route for L221?",
+                answer: ["SATOE", "TAYOG", "JOSHE"]
+            },
+            {
+                name: 'L325',
+                question: "What is the route for L325?",
+                answer: ["SCAPA", "DAKES", "GABYY", "JOSHE"]
+            },
+            {
+                name: 'L327',
+                question: "What is the route for L327?",
+                answer: ["SCAPA", "OPAUL"]
+            },
+            {
+                name: 'L329',
+                question: "What is the route for L329?",
+                answer: ["ZPATA", "PJM", "SAULT", "KEEKA"]
+            },
+            {
+                name: 'L335',
+                question: "What is the route for L335?",
+                answer: ["SCAPA", "MLIZA", "TRNKY", "OBIKE"]
+            },
+            {
+                name: 'L337',
+                question: "What is the route for L337?",
+                answer: ["NEGON", "KBEZA", "ARMUR"]
+            },
+            {
+                name: 'L343',
+                question: "What is the route for L343?",
+                answer: ["ANADA", "SATOE"]
+            },
+            {
+                name: 'L349',
+                question: "What is the route for L349?",
+                answer: ["SATOE", "GESSO", "GABAR"]
+            },
+            {
+                name: 'L454',
+                question: "What is the route for L454?",
+                answer: ["ILURI", "LEEOO", "GOTAY", "PANMO", "DONQU"]
+            },
+            {
+                name: 'L455',
+                question: "What is the route for L455?",
+                answer: ["KINCH", "LENNT", "JANMA", "VACHI", "KBEZA", "SCAPA"]
+            },
+            {
+                name: 'L456',
+                question: "What is the route for L456?",
+                answer: ["HANCY", "THANK", "FRATT", "ETEEE", "KIKER"]
+            },
+            {
+                name: 'L458',
+                question: "What is the route for L458?",
+                answer: ["CHEDR", "THANK", "PANMO", "ARMUR"]
+            },
+            {
+                name: 'L459',
+                question: "What is the route for L459?",
+                answer: ["KEEKA", "ODUCA", "CAFFE", "LEEOO", "ANADA"]
+            },
+            {
+                name: 'L460',
+                question: "What is the route for L460?",
+                answer: ["ODUCA", "STT"]
+            },
+            {
+                name: 'L461',
+                question: "What is the route for L461?",
+                answer: ["OPAUL", "YIYYO", "TRNKY", "PJM"]
+            },
+            {
+                name: 'L462',
+                question: "What is the route for L462?",
+                answer: ["DAWIN", "NEYDU", "LAMKN"]
+            },
+            {
+                name: 'L466',
+                question: "What is the route for L466?",
+                answer: ["GEECE", "MEEGL"]
+            },
+            {
+                name: 'L467',
+                question: "What is the route for L467?",
+                answer: ["ANADA", "ANNER", "GESSO"]
+            },
+            {
+                name: 'L577',
+                question: "What is the route for L577?",
+                answer: ["ANTEX", "STIIV", "GOUDA", "ELOPO"]
+            },
+            {
+                name: 'L776',
+                question: "What is the route for L776?",
+                answer: ["GEECE", "STIIV", "FERNA"]
+            },
+            {
+                name: 'Y185',
+                question: "What is the route for Y185?",
+                answer: ["ILURI", "ACONY", "DOZGO", "DONQU"]
+            },
+            {
+                name: 'Y260',
+                question: "What is the route for Y260?",
+                answer: ["MODUX", "LEEOO", "ACONY"]
+            },
+            {
+                name: 'Y280',
+                question: "What is the route for Y280?",
+                answer: ["GABAR", "DANDE", "MLIZA", "STIIV", "GOTAY", "ACONY", "SAPPO"]
+            },
+            {
+                name: 'Y290',
+                question: "What is the route for Y290?",
+                answer: ["CALTO", "ZIBER", "SAYER", "BEANO", "JETSS", "SLUGO", "PJM", "ELOPO"]
+            },
+            {
+                name: 'Y292',
+                question: "What is the route for Y292?",
+                answer: ["FIPEK", "PANMO"]
+            },
+            {
+                name: 'Y294',
+                question: "What is the route for Y294?",
+                answer: ["FIPEK", "GESSO"]
+            },
+            {
+                name: 'Y308',
+                question: "What is the route for Y308?",
+                answer: ["ACONY", "FEKKO"]
+            },
+            {
+                name: 'Y315',
+                question: "What is the route for Y315?",
+                answer: ["CHUMA", "DOZGO", "GEROA", "KEEKA"]
+            },
+            {
+                name: 'Y318',
+                question: "What is the route for Y318?",
+                answer: ["ELOPO", "LARPP", "WEXET", "DONQU"]
+            },
+            {
+                name: 'Y354',
+                question: "What is the route for Y354?",
+                answer: ["GESSO", "DONQU"]
+            },
+            {
+                name: 'Y355',
+                question: "What is the route for Y355?",
+                answer: ["FIPEK", "PUYYA", "PLING", "KOLAO", "SLUGO", "ELOPO"]
+            },
+            {
+                name: 'Y356',
+                question: "What is the route for Y356?",
+                answer: ["MEEGL", "DONQU"]
+            },
+            {
+                name: 'Y421',
+                question: "What is the route for Y421?",
+                answer: ["MEEGL", "HARBG"]
+            },
+            {
+                name: 'Y439',
+                question: "What is the route for Y439?",
+                answer: ["FIPEK", "SAYER", "MEEGL", "ARMUR"]
+            },
+            {
+                name: 'Y585',
+                question: "What is the route for Y585?",
+                answer: ["ELMUC", "TILDI", "UTAHS", "VEDAS"]
+            },
+            {
+                name: 'Y587',
+                question: "What is the route for Y587?",
+                answer: ["HARDE", "GAGDD", "ROBLL"]
+            },            
+
+            // ... (add more routes here)
+        ];
+    
+        const clickTolerance = 5;
+        const clickBuffer = 5;
+        const maxIncorrectAttempts = 3;
+    
+        let shuffledRoutes = shuffleArray(routes);
+        let currentRouteIndex = 0;
+        let currentPointIndex = 0;
+        let isDrawing = false;
+        let startPoint = null;
+        let clickedPoint = null;
+        let clickedFix = null;
+        let incorrectRoutes = [];
+        let incorrectAttempts = 0;
+
+        function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function displayQuestion(question) {
+    document.getElementById('question').innerText = question;
+}
+function moveToNextQuestion() {
+    console.log('Moving to next question...');
+    clearLineCanvas(); // Clear lines on the lineCanvas
+    currentLine = []; // Clear the currentLine array
+    correctPath = []; // Clear the correctPath array
+    currentPointIndex = 0; // Reset the currentPointIndex
+    isDrawing = false; // Reset the drawing state
+    orderDecided = false; // Reset the flag for the next question
+
+    drawCanvas(); // Redraw the canvas with background and elements
+
+    if (currentRouteIndex === shuffledRoutes.length - 1) {
+        showResults();
+    } else {
+        currentRouteIndex++;
+        displayQuestion(shuffledRoutes[currentRouteIndex].question);
+    }
+}
+
+// Initial setup
+shuffledRoutes = shuffleArray(routes);
+currentRouteIndex = 0;
+displayQuestion(shuffledRoutes[currentRouteIndex].question);
+
+    function displayPopup(popupId, message) {
+        const popup = document.getElementById(popupId);
+        popup.innerText = message;
+        popup.style.display = 'block';
+        setTimeout(() => {
+            popup.style.display = 'none';
+        }, 1500);
+    }
+    function isPointInRange(point, fix) {
+    return (
+        Math.abs(point.x - fix.x) <= clickTolerance + clickBuffer &&
+        Math.abs(point.y - fix.y) <= clickTolerance + clickBuffer
+    );
+}
+function setChosenOrder(order) {
+        chosenOrder = order;
+    }
+
+    const canvas = document.getElementById('map');
+const ctx = canvas.getContext('2d');
+
+// Define functions to handle canvas event listeners
+function attachCanvasEventListeners() {
+    canvas.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+}
+
+function detachCanvasEventListeners() {
+    canvas.removeEventListener('mousedown', handleMouseDown);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+}
+
+// Call attachCanvasEventListeners() initially to attach the listeners
+attachCanvasEventListeners();
+
+// Handlers for mouse events
+function handleMouseDown(event) {
+    // Your existing code for handling mousedown
+}
+
+function handleMouseMove(event) {
+    // Your existing code for handling mousemove
+}
+
+function handleMouseUp() {
+    // Your existing code for handling mouseup
+}
+
+// Call attachCanvasEventListeners() initially to attach the listeners
+attachCanvasEventListeners();
+
+const backgroundImage = new Image(); // Define backgroundImage here
+backgroundImage.src = 'Blank CERAP.png';
+
+// Define the drawCanvas function outside of backgroundImage.onload
+function drawCanvas() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate aspect ratio
+    const aspectRatio = backgroundImage.naturalWidth / backgroundImage.naturalHeight;
+
+    // Get available window dimensions
+    const availableWidth = window.innerWidth;
+    const availableHeight = window.innerHeight;
+
+    let canvasWidth, canvasHeight;
+
+    // Calculate canvas dimensions based on aspect ratio and available space
+    if (availableWidth / availableHeight > aspectRatio) {
+        canvasHeight = availableHeight;
+        canvasWidth = canvasHeight * aspectRatio;
+    } else {
+        canvasWidth = availableWidth;
+        canvasHeight = canvasWidth / aspectRatio;
+    }
+
+    // Set canvas dimensions
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    // Calculate the current scale factor based on canvas and image dimensions
+    currentScale = canvasWidth / backgroundImage.naturalWidth;
+
+    // Draw the background image on the canvas
+    ctx.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
+
+    // Draw other elements (fixes, lines, etc.)
+    fixes.forEach(fix => {
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(fix.x, fix.y, clickTolerance + clickBuffer, 0, 2 * Math.PI);
+        ctx.stroke();
+    });
+}
+
+backgroundImage.onload = () => {
+    console.log('Background image loaded successfully.');
+
+    // Call the drawCanvas function here
+    drawCanvas();
+};
+// Get a reference to the "Skip" button element
+const skipButton = document.getElementById('skipButton');
+
+        // Add a click event listener to the "Skip" button
+        skipButton.addEventListener('click', () => {
+            // Mark the current question as incorrect
+            incorrectRoutes.push(currentRouteIndex);
+
+            // Move to the next question
+            moveToNextQuestion();
+        });
+
+        
+
+        canvas.addEventListener('mousedown', (event) => {
+            const rect = canvas.getBoundingClientRect();
+            isDrawing = true;
+            startPoint = {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
+            };
+
+            clickedPoint = {
+                x: startPoint.x + clickBuffer,
+                y: startPoint.y + clickBuffer
+            };
+            currentLine = [startPoint]; // Start a new line with the clicked point
+        
+});
+
+document.addEventListener('mousemove', (event) => {
+    if (!isDrawing) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const currentPoint = {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+    };
+
+    currentLine.push(currentPoint); // Add the current point to the current line
+
+    // Draw the line segment
+    lineCtx.clearRect(0, 0, lineCanvas.width, lineCanvas.height);
+    lineCtx.strokeStyle = 'blue';
+    lineCtx.lineWidth = 2;
+    lineCtx.beginPath();
+    lineCtx.moveTo(startPoint.x, startPoint.y);
+    currentLine.forEach(point => {
+        lineCtx.lineTo(point.x, point.y);
+    });
+    lineCtx.stroke();
+});
+// Add the clearLineCanvas function
+function clearLineCanvas() {
+    console.log('Clearing line canvas...');
+    const lineCanvas = document.getElementById('lineCanvas');
+    const lineCtx = lineCanvas.getContext('2d');
+    lineCtx.clearRect(0, 0, lineCanvas.width, lineCanvas.height);
+    
+}
+
+document.addEventListener('mouseup', () => {
+    if (!isDrawing) return;
+
+    const currentRoute = shuffledRoutes[currentRouteIndex];
+    const expectedFix = currentRoute.answer[currentPointIndex];
+    let clickedFix = fixes.find(fix => isPointInRange(clickedPoint, fix));
+
+     // Log the coordinates where the user clicked
+     console.log(`Clicked at X: ${clickedPoint.x}, Y: ${clickedPoint.y}`);
+
+
+    if (!orderDecided) {
+        orderDecided = true;
+        if (clickedFix.label === currentRoute.answer[0]) {
+            chosenOrder = 'forward';
+        } else if (clickedFix.label === currentRoute.answer[currentRoute.answer.length - 1]) {
+            chosenOrder = 'reverse';
+        }
+
+        canvas.innerHTML = ''; // Clear the canvas to avoid displaying lines prematurely
+    }
+
+    if (orderDecided) {
+        if (
+            (chosenOrder === 'forward' && clickedFix.label === currentRoute.answer[currentPointIndex]) ||
+            (chosenOrder === 'reverse' && clickedFix.label === currentRoute.answer[currentRoute.answer.length - 1 - currentPointIndex])
+        ) {
+        currentLine = []; // Clear the current line
+        correctPath.push(clickedFix);
+
+        // Draw lines between the fixes in the correctPath array
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        correctPath.forEach((fix, index) => {
+            if (index === 0) {
+                ctx.moveTo(fix.x, fix.y);
+            } else {
+                ctx.lineTo(fix.x, fix.y);
+            }
+        });
+        ctx.stroke();
+
+        if (currentPointIndex === currentRoute.answer.length - 1) {
+            currentPointIndex = 0;
+            moveToNextQuestion(); // Call the function to move to the next question
+            displayQuestion(shuffledRoutes[currentRouteIndex].question);
+            displayPopup('correctPopup', 'Correct! Next question.');
+            incorrectAttempts = 0; // Reset incorrect attempts upon moving to the next question
+        } else {
+            currentPointIndex++;
+            displayPopup('correctPopup', 'Correct! Next fix.');
+            incorrectAttempts = 0; // Reset incorrect attempts upon correct answer
+        }
+    } else {
+        // Increment incorrect attempts and check the limit
+        incorrectAttempts++;
+            if (incorrectAttempts >= maxIncorrectAttempts) {
+                displayPopup('incorrectPopup', 'Incorrect answer. Try again.');
+                incorrectRoutes.push(currentRouteIndex); // Mark the question as incorrect
+                moveToNextQuestion(); // Move to the next question after reaching the limit
+                incorrectAttempts = 0; // Reset incorrect attempts for the next question
+            } else {
+                displayPopup('incorrectPopup', 'Incorrect answer. Try again.');
+            }
+        }
+    }
+
+canvas.innerHTML = '';
+isDrawing = false;
+
+if (currentRouteIndex === shuffledRoutes.length) {
+    showResults();
+}
+});
+
+
+function showResults() {
+    // Calculate and display the results
+    const correctCount = routes.length - incorrectRoutes.length;
+    const grade = (correctCount / routes.length) * 100;
+
+    const missedRouteNames = incorrectRoutes.map(index => routes[index].name);
+
+    document.getElementById('grade').innerText = `Grade: ${grade.toFixed(2)}%`;
+    document.getElementById('correctCount').innerText = `Correct Answers: ${correctCount}`;
+    document.getElementById('missedRoutes').innerText = `Missed Routes: ${missedRouteNames.join(', ')}`;
+
+    // Display the results popup
+    const resultsPopup = document.getElementById('resultsPopup');
+    resultsPopup.innerHTML = `
+        <p id="grade">Grade: ${grade.toFixed(2)}%</p>
+        <p id="correctCount">Correct Answers: ${correctCount}</p>
+        <p id="missedRoutes">Missed Routes: ${missedRouteNames.join(', ')}</p>
+        <a href="index.html"><button>Home Page</button></a>
+        <button id="tryAgainButton">Try Again</button>
+    `;
+    resultsPopup.style.display = 'block';
+
+    // Add click event listener to the "Try Again" button
+    const tryAgainButton = document.getElementById('tryAgainButton');
+    tryAgainButton.addEventListener('click', () => {
+        moveToNextQuestion();
+        location.reload(); // Refresh the page
+    });
+}
+
+
+// ... Rest of your code ...
+
+    </script>
+</body>
+</html>
