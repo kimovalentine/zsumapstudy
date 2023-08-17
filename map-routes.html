@@ -47,16 +47,18 @@
         }
     }
 
-    .popup {
-    position: absolute;
-    display: none;
-    padding: 5px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    z-index: 1000; /* Ensure the popup appears above other elements */
-}
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px;
+            background-color: white;
+            border: 2px solid #555;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+        }
 
         .popup.correct {
             border-color: green;
@@ -96,7 +98,6 @@
     <canvas id="map"></canvas>
     <canvas id="lineCanvas"></canvas>
 
-    <div id="clickPopup" class="popup"></div>
 
     <div id="correctPopup" class="popup correct">
         Correct! Click on the next point.
@@ -539,7 +540,6 @@
     function displayQuestion(question) {
     document.getElementById('question').innerText = question;
 }
-
 function moveToNextQuestion() {
     console.log('Moving to next question...');
     clearLineCanvas(); // Clear lines on the lineCanvas
@@ -548,8 +548,8 @@ function moveToNextQuestion() {
     currentPointIndex = 0; // Reset the currentPointIndex
     isDrawing = false; // Reset the drawing state
     orderDecided = false; // Reset the flag for the next question
- 
-   drawCanvas(); // Redraw the canvas with background and elements
+
+    drawCanvas(); // Redraw the canvas with background and elements
 
     if (currentRouteIndex === shuffledRoutes.length - 1) {
         showResults();
@@ -559,22 +559,19 @@ function moveToNextQuestion() {
     }
 }
 
-
 // Initial setup
 shuffledRoutes = shuffleArray(routes);
 currentRouteIndex = 0;
 displayQuestion(shuffledRoutes[currentRouteIndex].question);
 
-function displayPopup(popupId, message, x, y) {
-    const popup = document.getElementById(popupId);
-    popup.innerText = message;
-    popup.style.display = 'block';
-    popup.style.left = x + 'px';
-    popup.style.top = y + 'px';
-    setTimeout(() => {
-        popup.style.display = 'none';
-    }, 1500);
-}
+    function displayPopup(popupId, message) {
+        const popup = document.getElementById(popupId);
+        popup.innerText = message;
+        popup.style.display = 'block';
+        setTimeout(() => {
+            popup.style.display = 'none';
+        }, 1500);
+    }
     function isPointInRange(point, fix) {
     const xRange = fix.x * canvas.width;
     const yRange = fix.y * canvas.height;
@@ -590,7 +587,6 @@ function setChosenOrder(order) {
         chosenOrder = order;
     }
 
-    let canvasWidth, canvasHeight;
     const canvas = document.getElementById('map');
 const ctx = canvas.getContext('2d');
 
@@ -612,12 +608,15 @@ attachCanvasEventListeners();
 
 // Handlers for mouse events
 function handleMouseDown(event) {
+    // Your existing code for handling mousedown
 }
 
 function handleMouseMove(event) {
+    // Your existing code for handling mousemove
 }
 
 function handleMouseUp() {
+    // Your existing code for handling mouseup
 }
 
 // Call attachCanvasEventListeners() initially to attach the listeners
@@ -626,8 +625,10 @@ attachCanvasEventListeners();
 const backgroundImage = new Image(); // Define backgroundImage here
 backgroundImage.src = 'Blank CERAP.png';
 
-backgroundImage.onload = () => {
-    console.log('Background image loaded successfully.');
+// Define the drawCanvas function outside of backgroundImage.onload
+function drawCanvas() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Calculate aspect ratio
     const aspectRatio = backgroundImage.naturalWidth / backgroundImage.naturalHeight;
@@ -635,6 +636,8 @@ backgroundImage.onload = () => {
     // Get available window dimensions
     const availableWidth = window.innerWidth;
     const availableHeight = window.innerHeight;
+
+    let canvasWidth, canvasHeight;
 
     // Calculate canvas dimensions based on aspect ratio and available space
     if (availableWidth / availableHeight > aspectRatio) {
@@ -657,18 +660,23 @@ backgroundImage.onload = () => {
 
     // Draw other elements (fixes, lines, etc.)
     fixes.forEach(fix => {
-        const x = fix.x * canvas.width;
-        const y = fix.y * canvas.height;
+    const x = fix.x * canvas.width;
+    const y = fix.y * canvas.height;
 
-        ctx.strokeStyle = 'green';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(x, y, clickTolerance + clickBuffer, 0, 2 * Math.PI);
-        ctx.stroke();
-    });
-    drawCanvas();
+    ctx.strokeStyle = 'green';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, clickTolerance + clickBuffer, 0, 2 * Math.PI);
+    ctx.stroke();
+});
 }
 
+backgroundImage.onload = () => {
+    console.log('Background image loaded successfully.');
+
+    // Call the drawCanvas function here
+    drawCanvas();
+};
 // Get a reference to the "Skip" button element
 const skipButton = document.getElementById('skipButton');
 
@@ -681,82 +689,7 @@ const skipButton = document.getElementById('skipButton');
             moveToNextQuestion();
         });
 
-        function drawCanvas() {
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Apply the current scale transformation
-    ctx.scale(currentScale, currentScale);
-
-    // Draw the background image
-    ctx.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
-
-    // Draw other elements (fixes, lines, etc.)
-    fixes.forEach(fix => {
-        const x = fix.x * canvasWidth;
-        const y = fix.y * canvasHeight;
-
-        ctx.strokeStyle = 'green';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(x, y, clickTolerance + clickBuffer, 0, 2 * Math.PI);
-        ctx.stroke();
-    });
-
-    // Reset the scale transformation
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-}
-const zoomInButton = document.getElementById('zoomInButton');
-const zoomOutButton = document.getElementById('zoomOutButton');
-
-
-        // Example zoom function (you'll need to implement the actual zoom action)
-        function zoomIn() {
-    const newCanvasWidth = canvas.width * 1.2;
-    const newCanvasHeight = canvas.height * 1.2;
-
-    // Calculate the new scale factor based on the updated canvas size
-    currentScale = newCanvasWidth / backgroundImage.naturalWidth;
-
-    // Resize the canvas
-    canvas.width = newCanvasWidth;
-    canvas.height = newCanvasHeight;
-
-    // Redraw the canvas with the scaled image and other elements
-    redrawCanvas();
-
-    console.log('Updated scale:', currentScale);
-}
-
-function zoomOut() {
-    currentScale /= 1.2; // Adjust the scale factor
-    console.log('Updated scale:', currentScale);
-    redrawCanvas(); // Redraw the canvas with the updated scale
-}
-
-function redrawCanvas() {
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Calculate the new dimensions of the image based on the current scale
-    const newWidth = backgroundImage.naturalWidth * currentScale;
-    const newHeight = backgroundImage.naturalHeight * currentScale;
-
-    // Draw the background image on the canvas with the new dimensions
-    ctx.drawImage(backgroundImage, 0, 0, newWidth, newHeight);
-
-    // Draw other elements (fixes, lines, etc.)
-    fixes.forEach(fix => {
-        const x = fix.x * newWidth;
-        const y = fix.y * newHeight;
-
-        ctx.strokeStyle = 'green';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(x, y, clickTolerance + clickBuffer, 0, 2 * Math.PI);
-        ctx.stroke();
-    });
-}
+        
 
         canvas.addEventListener('mousedown', (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -771,7 +704,6 @@ function redrawCanvas() {
         y: startPoint.y + clickBuffer
     };
     currentLine = [startPoint]; // Start a new line with the clicked point
-    // Display the popup at the cursor location
 });
 
 document.addEventListener('mousemove', (event) => {
@@ -818,9 +750,9 @@ canvas.addEventListener('mouseup', () => {
         // Retrieve the current route from shuffledRoutes based on currentRouteIndex
         currentRoute = shuffledRoutes[currentRouteIndex]; // Use the existing currentRoute variable
         
-        if (clickedFix && clickedFix.label === currentRoute.answer[0]) {
+        if (clickedFix.label === currentRoute.answer[0]) {
             chosenOrder = 'forward';
-        } else if (clickedFix && clickedFix.label === currentRoute.answer[currentRoute.answer.length - 1]) {
+        } else if (clickedFix.label === currentRoute.answer[currentRoute.answer.length - 1]) {
             chosenOrder = 'reverse';
         }
 
@@ -855,23 +787,23 @@ canvas.addEventListener('mouseup', () => {
             currentPointIndex = 0;
             moveToNextQuestion(); // Call the function to move to the next question
             displayQuestion(shuffledRoutes[currentRouteIndex].question);
-            displayPopup('correctPopup', 'Correct! Next question.', event.clientX, event.clientY);
+            displayPopup('correctPopup', 'Correct! Next question.');
             incorrectAttempts = 0; // Reset incorrect attempts upon moving to the next question
         } else {
             currentPointIndex++;
-            displayPopup('correctPopup', 'Correct! Next fix.', event.clientX, event.clientY);
+            displayPopup('correctPopup', 'Correct! Next fix.');
             incorrectAttempts = 0; // Reset incorrect attempts upon correct answer
         }
     } else {
         // Increment incorrect attempts and check the limit
         incorrectAttempts++;
             if (incorrectAttempts >= maxIncorrectAttempts) {
-                displayPopup('incorrectPopup', 'Incorrect answer. Next question.', event.clientX, event.clientY);
+                displayPopup('incorrectPopup', 'Incorrect answer. Try again.');
                 incorrectRoutes.push(currentRouteIndex); // Mark the question as incorrect
                 moveToNextQuestion(); // Move to the next question after reaching the limit
                 incorrectAttempts = 0; // Reset incorrect attempts for the next question
             } else {
-                displayPopup('incorrectPopup', 'Incorrect answer. Try again.', event.clientX, event.clientY);
+                displayPopup('incorrectPopup', 'Incorrect answer. Try again.');
             }
         }
     }
